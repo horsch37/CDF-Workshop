@@ -183,14 +183,54 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 * Configuring and starting MiNiFi
 * Enjoying the data flow!
 
-Go to NiFi Registry and create a bucket named **cem**
+Go to NiFi Registry and create a bucket named **IoT**
 
-As root (sudo su -) start EFM, MiNiFi C++, MiNiFi Java
+As root (sudo su -) install and start EFM, MiNiFi Java
 
 ```bash
-/etc/efm/efm-1.0.0.1.0.0.0-54/bin/efm.sh start
-/etc/minifi-cpp/nifi-minifi-cpp-0.6.0/bin/run.sh
-/etc/minifi-java/minifi-0.6.0.1.0.0.0-54/bin/minifi.sh start
+git clone https://github.com/horsch37/iot-hackathon /opt/demo
+yum install -y https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
+yum install -y postgresql96-server postgresql96-contrib
+/usr/pgsql-9.6/bin/postgresql96-setup initdb
+sed -i 's,#port = 5432,port = 5433,g' /var/lib/pgsql/9.6/data/postgresql.conf
+sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /var/lib/pgsql/9.6/data/postgresql.conf
+sed -i "s/\(127.0.0.1\/32\s\+\)ident/\1trust/g" /var/lib/pgsql/9.6/data/pg_hba.conf 
+echo 'host    all          all            0.0.0.0/0  trust' | sudo tee -a /var/lib/pgsql/9.6/data/pg_hba.conf
+
+systemctl enable postgresql-9.6.service
+systemctl start postgresql-9.6.service
+
+echo "CREATE DATABASE efm;" | sudo -u postgres psql -U postgres -h localhost -p 5433
+echo "CREATE USER efm WITH PASSWORD 'cloudera';" | sudo -u postgres psql -U postgres -h localhost -p 5433
+echo "GRANT ALL PRIVILEGES ON DATABASE efm TO efm;" | sudo -u postgres psql -U postgres -h localhost -p 5433
+
+mkdir -p /opt/cloudera/cem
+wget http://archive.cloudera.com/CFM/centos7/1.x/updates/1.0.0.0/tars/nifi/nifi-toolkit-1.9.0.1.0.0.0-90-bin.tar.gz -P /opt/cloudera/cem 
+wget https://archive.cloudera.com/CEM/centos7/1.x/updates/1.0.0.0/CEM-1.0.0.0-centos7-tars-tarball.tar.gz -P /opt/cloudera/cem
+tar xzf /opt/cloudera/cem/CEM-1.0.0.0-centos7-tars-tarball.tar.gz -C /opt/cloudera/cem
+tar xzf /opt/cloudera/cem/CEM/centos7/1.0.0.0-54/tars/efm/efm-1.0.0.1.0.0.0-54-bin.tar.gz -C /opt/cloudera/cem
+tar xzf /opt/cloudera/cem/CEM/centos7/1.0.0.0-54/tars/minifi/minifi-0.6.0.1.0.0.0-54-bin.tar.gz -C /opt/cloudera/cem
+tar xzf /opt/cloudera/cem/CEM/centos7/1.0.0.0-54/tars/minifi/minifi-toolkit-0.6.0.1.0.0.0-54-bin.tar.gz -C /opt/cloudera/cem
+tar xzf /opt/cloudera/cem/nifi-toolkit-1.9.0.1.0.0.0-90-bin.tar.gz -C /opt/cloudera/cem
+/bin/rm -f /opt/cloudera/cem/CEM-1.0.0.0-centos7-tars-tarball.tar.gz
+/bin/rm -f /opt/cloudera/cem/nifi-toolkit-1.9.0.1.0.0.0-90-bin.tar.gz
+ln -s /opt/cloudera/cem/efm-1.0.0.1.0.0.0-54 /opt/cloudera/cem/efm
+ln -s /opt/cloudera/cem/minifi-0.6.0.1.0.0.0-54 /opt/cloudera/cem/minifi
+ln -s /opt/cloudera/cem/efm/bin/efm.sh /etc/init.d/efm
+
+chown -R root:root /opt/cloudera/cem/efm-1.0.0.1.0.0.0-54
+chown -R root:root /opt/cloudera/cem/minifi-0.6.0.1.0.0.0-54
+chown -R root:root /opt/cloudera/cem/minifi-toolkit-0.6.0.1.0.0.0-54
+/bin/rm -f /opt/cloudera/cem/efm/conf/efm.properties
+cp /opt/demo/efm.properties /opt/cloudera/cem/efm/conf
+/bin/rm -f /opt/cloudera/cem/minifi/conf/bootstrap.conf
+cp /opt/demo/bootstrap.conf /opt/cloudera/cem/minifi/conf
+sed -i "s/YourHostname/demo.hortonworks.com/g" /opt/cloudera/cem/efm/conf/efm.properties
+sed -i "s/YourHostname/demo.hortonworks.com/g" /opt/cloudera/cem/minifi/conf/bootstrap.conf
+/opt/cloudera/cem/minifi/bin/minifi.sh install
+
+service minifi start
+service efm start
 ```
 
 Visit [EFM UI](http://YOURIP:10080/efm/ui/)
