@@ -56,8 +56,8 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
 
  Our final flow for this lab will look like the following:
 
-  ![Image](https://github.com/tspannhw/CDF-Workshop/raw/master/lab1.png)
-  A template for this flow can be found [here](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/templates/HDF-Workshop_Lab1-Flow.xml)
+  ![Image](https://github.com/horsch37/CDF-Workshop/raw/master/lab1.png)
+  A template for this flow can be found [here](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/templates/HDF-Workshop_Lab1-Flow.xml)
 
   - Step 1: Add a ConnectWebSocket processor to the cavas
       - In case you are using a downloaded template, the ControllerService will be prepopulated. You will need to enable the ControllerService. Double-click the processor and follow the arrow next to the JettyWebSocketClient
@@ -68,7 +68,7 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
   - Step 2: Add an UpdateAttribute procesor
     - Configure it to have a custom property called ``` mime.type ``` with the value of ``` application/json ```
   - Step 3. Add an EvaluateJsonPath processor and configure it as shown below:
-  ![Image](https://github.com/tspannhw/CDF-Workshop/raw/master/jsonpath.png)
+  ![Image](https://github.com/horsch37/CDF-Workshop/raw/master/jsonpath.png)
 
     The properties to add are:
     ```
@@ -142,13 +142,13 @@ NOTE: The following instructions are for using Putty. You can also use other pop
 
 - Use Putty to connect to your node using the ppk key:
   - Connection > SSH > Auth > Private key for authentication > Browse... > Select cdf.ppk
-![Image](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/putty.png)
+![Image](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/putty.png)
 
 - Create a new session called `cdf-workshop`
    - For the Host Name use: centos@IP_ADDRESS_OF_EC2_NODE
    - Click "Save" on the session page before logging in
 
-![Image](https://github.com/tspannhw/CDF-Workshop/raw/master/putty-session.png)
+![Image](https://github.com/horsch37/CDF-Workshop/raw/master/putty-session.png)
 
 ### To connect from Linux/MacOSX laptop
 
@@ -171,7 +171,7 @@ NOTE: The following instructions are for using Putty. You can also use other pop
 
 # Lab 3
 
-  ![Image](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/cemOpenFlows.png)
+  ![Image](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/cemMiNiFiJavaEdit.png)
 
 ## Getting started with MiNiFi and EFM ##
 
@@ -235,23 +235,19 @@ service efm start
 
 Visit [EFM UI](http://YOURIP:10080/efm/ui/)
 
-![EFM UI](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/cemMiNiFiJavaEdit.png)
+![EFM UI](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/cemMiNiFiJavaEdit.png)
 
 You should see heartbeats coming from the agent.
 
-![EFM agents monitor](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/cemEvents2.png)
-
-![EFM agents monitoring details](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/cemEventDetails.png)
+![EFM agents monitor](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/cemEvents2.png)
 
 Now, **on the root canvas**, create a simple flow to collect local syslog messages and forward them to NiFi, where the logs will be parsed, transformed into another format and pushed to a Kafka topic.
 
-Our Java MiNiFi Agent has been tagged with the class 'minifijava' (check nifi.c2.agent.class property in /etc/minifi-java/minifi-0.6.0.1.0.0.0-54/conf/bootstrap.conf) so we are going to create a template under this specific class.
-
-Our MiNiFi C++ Agent has been tagged with the class 'minificpp' (check nifi.c2.agent.class property in /etc/minifi-cpp/nifi-minifi-cpp-0.6.0/conf/minifi.properties) so we are going to create a template under this specific class.
+Our Java MiNiFi Agent has been tagged with the class 'iot-1' (check nifi.c2.agent.class property in minifi-0.6.0.1.0.0.0-54/conf/bootstrap.conf)
 
 But first we need to add an Input Port to the root canvas of NiFi and build a flow as described before. Input Port are used to receive flow files from remote MiNiFi agents or other NiFi instances.  We create one for each agent class to make it easy.
 
-![NiFi syslog parser](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/efmMiNiFiFlow.png)
+![NiFi syslog parser](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/efmMiNiFiFlow.png)
 
 Don't forget to create a new Kafka topic.
 
@@ -261,7 +257,7 @@ We are going to use a Grok parser to parse the Syslog messages. Here is a Grok e
 
 Now that we have built the Apache NiFi flow that will receive the logs, let's go back to the EFM UI and build the MiNiFi flow as below:
 
-![CEM flow](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/efmMiNiFiFlow.png)
+![CEM flow](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/efmMiNiFiFlow.png)
 
 This MiNiFi agent will tail /var/log/messages or /var/log/secure and send the logs to a remote process group (our NiFi instance) using the Input Port.
 
