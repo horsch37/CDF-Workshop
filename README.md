@@ -277,8 +277,11 @@ Visit [NiFi Registry UI](http://YOURURL:61080/nifi-registry/explorer/grid-list) 
 
 Within few seconds, you should be able to see syslog messages streaming through your NiFi flow and be published to the Kafka topic you have created.
 
-![Syslog message](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/syslognifi2.png)
-
+![Syslog message](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimsyslognifi.png)
+![GROK Settings](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimgrok.png)
+![Kafka Write](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkawrite.png)
+![Kafka Read](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkaread.png)
+![Kafka Settings](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkaread2.png)
 
 Now we should be ready to create our flow. To do this do the following:
 
