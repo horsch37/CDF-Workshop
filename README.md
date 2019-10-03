@@ -183,8 +183,6 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 * Configuring and starting MiNiFi
 * Enjoying the data flow!
 
-Go to NiFi Registry and create a bucket named **IoT**
-
 As root (sudo su -) install and start EFM, MiNiFi Java
 
 ```bash
@@ -247,21 +245,36 @@ Our Java MiNiFi Agent has been tagged with the class 'iot-1' (check nifi.c2.agen
 
 But first we need to add an Input Port to the root canvas of NiFi and build a flow as described before. Input Port are used to receive flow files from remote MiNiFi agents or other NiFi instances.  We create one for each agent class to make it easy.
 
-![NiFi syslog parser](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/efmMiNiFiFlow.png)
+![Syslog message](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimsyslognifi.png)
+![GROK Settings](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimgrok.png)
+![Kafka Write](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkawrite.png)
+![Kafka Read](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkaread.png)
+![Kafka Settings](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkaread2.png)
 
-Don't forget to create a new Kafka topic.
+Now we should be ready to create our flow. To do this do the following:
+
+1.	The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it whatever you like.  We are only interested in the id.
+
+![Connection](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/configureConnection.png)
+
+2. Now that the Input Port is configured we need to have somewhere for the data to go once we receive it. In this case we will keep it very simple and just log the attributes. To do this drag the Processor icon to the canvas and choose the ProduceKafkaRecord processor.
 
 We are going to use a Grok parser to parse the Syslog messages. Here is a Grok expression that can be used to parse such logs format:
 
 ```%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}```
 
-Now that we have built the Apache NiFi flow that will receive the logs, let's go back to the EFM UI and build the MiNiFi flow as below:
+Now that we have built the Apache NiFi flow that will receive the logs, let's setup the nifi registry then go back to the EFM UI and build the MiNiFi flow.
 
+Go to NiFi Registry and create a bucket named **IoT**
+
+![NiFi Registry](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/nifiregistry.png)
+
+Build the MiNiFi flow:
 ![CEM flow](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/efmMiNiFiFlow.png)
 
 This MiNiFi agent will tail /var/log/messages or /var/log/secure and send the logs to a remote process group (our NiFi instance) using the Input Port.
 
-![Tailfile](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/efmMiNiFiFlow.png)
+![Tailfile](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/efmMiNiFiFlow.png)
 
 Check to make sure only 1 concurrent call.
 
@@ -273,23 +286,7 @@ Now we can start the NiFi flow and publish the MiNiFi flow to NiFi registry (Act
 
 Visit [NiFi Registry UI](http://YOURURL:61080/nifi-registry/explorer/grid-list) to make sure your flow has been published successfully.
 
-![NiFi Registry](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/nifiregistry.png)
-
 Within few seconds, you should be able to see syslog messages streaming through your NiFi flow and be published to the Kafka topic you have created.
-
-![Syslog message](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimsyslognifi.png)
-![GROK Settings](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimgrok.png)
-![Kafka Write](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkawrite.png)
-![Kafka Read](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkaread.png)
-![Kafka Settings](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkaread2.png)
-
-Now we should be ready to create our flow. To do this do the following:
-
-1.	The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it whatever you like.  We are only interested in the id.
-
-![Connection](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/configureConnection.png)
-
-2. Now that the Input Port is configured we need to have somewhere for the data to go once we receive it. In this case we will keep it very simple and just log the attributes. To do this drag the Processor icon to the canvas and choose the LogAttribute processor.
 
 ![Configure RPG](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/configureRPG.png)
 
@@ -305,7 +302,7 @@ If you see error logs such as "the remote instance indicates that the port is no
 it is because the Input Port has not been started.
 Start the port and you will see messages being accumulated in its downstream queue.
 
-![Image](https://github.com/tspannhw/CDF-Workshop/raw/master/nifiportdetails2.png)
+![Image](https://github.com/jhorsch/CDF-Workshop/raw/master/nifiportdetails2.png)
 
 ------------------
 
