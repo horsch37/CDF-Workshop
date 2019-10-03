@@ -249,7 +249,7 @@ Now we should be ready to create our flow in Nifi. To do this do the following:
 
 ![Syslog message](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimsyslognifi.png)
 
-2. Now that the Input Port is configured we need to have somewhere for the data to go once we receive it. In this case we will publish the message to Kafka using a GrokReader and JSONWriter. To do this drag the Processor icon to the canvas and choose the ProduceKafkaRecord processor.
+2. Now that the Input Port is configured we need to have somewhere for the data to go once we receive it. In this case we will publish the message to Kafka using a GrokReader and JSONWriter. To do this drag the Processor icon to the canvas and choose the PublishKafkaRecord_2_0 processor.
 
 ![Kafka Write](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkawrite.png)
 ![GROK Settings](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimgrok.png)
@@ -265,11 +265,9 @@ Go to NiFi Registry and create a bucket named **IoT**
 ![NiFi Registry](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/nifiregistry.png)
 
 Build the MiNiFi flow:
-![CEM flow](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/efmMiNiFiFlow.png)
+![CEM_Flow](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/cemMiNiFiJavaEdit.png)
 
 This MiNiFi agent will tail /var/log/messages or /var/log/secure and send the logs to a remote process group (our NiFi instance) using the Input Port.
-
-![Tailfile](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/efmMiNiFiFlow.png)
 
 Check to make sure only 1 concurrent call.
 
@@ -282,10 +280,6 @@ Now we can start the NiFi flow and publish the MiNiFi flow to NiFi registry (Act
 Visit [NiFi Registry UI](http://YOURURL:61080/nifi-registry/explorer/grid-list) to make sure your flow has been published successfully.
 
 Within few seconds, you should be able to see syslog messages streaming through your NiFi flow and be published to the Kafka topic you have created.
-
-![Configure RPG](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/configureRPG.png)
-
-![Create Remote Connection](https://github.com/tspannhw/CDF-Workshop/blob/master/createRemoteConnection.png)
 
 ![EFM REST API](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/efmapi.png)
 
