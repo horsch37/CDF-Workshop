@@ -6,7 +6,7 @@
   - Writing JSON to File System
 - [Lab 2](#lab-2)
   - Access the cluster  
-- [Lab 3](#lab-3) - MiNiFi CPP and Java Agents with EFM
+- [Lab 3](#lab-3) - MiNiFi Java Agents with EFM
   - Designing the MiNiFi Flow
   - Preparing the flow
   - Running MiNiFi agents
@@ -243,21 +243,16 @@ Now, **on the root canvas**, create a simple flow to collect local syslog messag
 
 Our Java MiNiFi Agent has been tagged with the class 'iot-1' (check nifi.c2.agent.class property in minifi-0.6.0.1.0.0.0-54/conf/bootstrap.conf)
 
-But first we need to add an Input Port to the root canvas of NiFi and build a flow as described before. Input Port are used to receive flow files from remote MiNiFi agents or other NiFi instances.  We create one for each agent class to make it easy.
-
-![Syslog message](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimsyslognifi.png)
-![GROK Settings](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimgrok.png)
-![Kafka Write](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkawrite.png)
-![Kafka Read](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkaread.png)
-![Kafka Settings](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkaread2.png)
-
-Now we should be ready to create our flow. To do this do the following:
+Now we should be ready to create our flow in Nifi. To do this do the following:
 
 1.	The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it whatever you like.  We are only interested in the id.
 
-![Connection](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/configureConnection.png)
+![Syslog message](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimsyslognifi.png)
 
-2. Now that the Input Port is configured we need to have somewhere for the data to go once we receive it. In this case we will keep it very simple and just log the attributes. To do this drag the Processor icon to the canvas and choose the ProduceKafkaRecord processor.
+2. Now that the Input Port is configured we need to have somewhere for the data to go once we receive it. In this case we will publish the message to Kafka using a GrokReader and JSONWriter. To do this drag the Processor icon to the canvas and choose the ProduceKafkaRecord processor.
+
+![Kafka Write](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimkafkawrite.png)
+![GROK Settings](https://raw.githubusercontent.com/horsch37/CDF-Workshop/master/jimgrok.png)
 
 We are going to use a Grok parser to parse the Syslog messages. Here is a Grok expression that can be used to parse such logs format:
 
