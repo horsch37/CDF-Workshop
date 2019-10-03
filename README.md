@@ -269,11 +269,19 @@ Build the MiNiFi flow:
 
 This MiNiFi agent will tail /var/log/messages or /var/log/secure and send the logs to a remote process group (our NiFi instance) using the Input Port.
 
-Check to make sure only 1 concurrent call.
+Now we should be ready to create our flow in MiNiFi. To do this do the following:
+
+1. The first thing to do is to drag a TailFile processor onto the canvas.  Set the properties to point to the file location /var/log/messages
+
+2. Drag a RemoteProcessGroup onto the canvas and setup the properties as below.  
 
 Please note that the NiFi instance has been configured to receive data over HTTP only, not RAW!
 
 ![Remote process group](https://raw.githubusercontent.com/tspannhw/CDF-Workshop/master/configureRemoteProcessGroup.png)
+
+3. Connect the 2 processors together and use the Nifi Port ID that we obtained from our Nifi flow as the remnote port.
+
+Check to make sure only 1 concurrent call.
 
 Now we can start the NiFi flow and publish the MiNiFi flow to NiFi registry (Actions > Publish...)
 
